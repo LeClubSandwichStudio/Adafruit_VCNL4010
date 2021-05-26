@@ -54,7 +54,7 @@ boolean Adafruit_VCNL4010::begin(uint8_t addr, TwoWire *theWire) {
   }
 
   setLEDcurrent(20);             // 200 mA
-  setFrequency(VCNL4010_16_625); // 16.625 readings/second
+  setFrequency(VCNL4010_62_5); // 16.625 readings/second
 
   write8(VCNL4010_INTCONTROL, 0x08);
   return true;
@@ -113,15 +113,18 @@ uint16_t Adafruit_VCNL4010::readProximity(void) {
   write8(VCNL4010_INTSTAT, i);
 
   write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITY);
-  while (1) {
+  //while (1) {
+    delay(2);
     // Serial.println(read8(VCNL4010_INTSTAT), HEX);
     uint8_t result = read8(VCNL4010_COMMAND);
     // Serial.print("Ready = 0x"); Serial.println(result, HEX);
     if (result & VCNL4010_PROXIMITYREADY) {
       return read16(VCNL4010_PROXIMITYDATA);
+    } else {
+      return 0;
     }
     delay(1);
-  }
+  //}
 }
 
 /**************************************************************************/
