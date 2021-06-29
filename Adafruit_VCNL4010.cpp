@@ -113,18 +113,15 @@ uint16_t Adafruit_VCNL4010::readProximity(void) {
   write8(VCNL4010_INTSTAT, i);
 
   write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITY);
-  //while (1) {
-    delay(2);
-    // Serial.println(read8(VCNL4010_INTSTAT), HEX);
-    uint8_t result = read8(VCNL4010_COMMAND);
-    // Serial.print("Ready = 0x"); Serial.println(result, HEX);
-    if (result & VCNL4010_PROXIMITYREADY) {
-      return read16(VCNL4010_PROXIMITYDATA);
-    } else {
-      return 0;
-    }
-    delay(1);
-  //}
+  delay(2);
+  // Serial.println(read8(VCNL4010_INTSTAT), HEX);
+  uint8_t result = read8(VCNL4010_COMMAND);
+  // Serial.print("Ready = 0x"); Serial.println(result, HEX);
+  if (result & VCNL4010_PROXIMITYREADY) {
+    return read16(VCNL4010_PROXIMITYDATA);
+  } else {
+    return 0;
+  }
 }
 
 /**************************************************************************/
@@ -146,6 +143,8 @@ uint16_t Adafruit_VCNL4010::readAmbient(void) {
     // Serial.print("Ready = 0x"); Serial.println(result, HEX);
     if (result & VCNL4010_AMBIENTREADY) {
       return read16(VCNL4010_AMBIENTDATA);
+    } else {
+      return 0;
     }
     delay(1);
   }
@@ -193,19 +192,20 @@ uint16_t Adafruit_VCNL4010::read16(uint8_t address) {
   _wire->endTransmission();
 
   _wire->requestFrom(_i2caddr, (uint8_t)2);
-  while (!_wire->available())
-    ;
+  delay(1);
+  if (!_wire->available())
+    return 0;
 #if ARDUINO >= 100
   data = _wire->read();
   data <<= 8;
-  while (!_wire->available())
-    ;
+  if (!_wire->available())
+    return 0;
   data |= _wire->read();
 #else
   data = _wire->receive();
   data <<= 8;
-  while (!_wire->available())
-    ;
+  if (!_wire->available())
+    return 0;
   data |= _wire->receive();
 #endif
 
