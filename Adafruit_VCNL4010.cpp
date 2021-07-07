@@ -192,7 +192,7 @@ uint16_t Adafruit_VCNL4010::read16(uint8_t address) {
   _wire->endTransmission();
 
   _wire->requestFrom(_i2caddr, (uint8_t)2);
-  delay(1);
+  delay(5);
   if (!_wire->available())
     return 0;
 #if ARDUINO >= 100
